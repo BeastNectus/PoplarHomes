@@ -1,20 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import LoginScreen from './src/views/screens/Login/LoginScreen';
+import HomeScreen from './src/views/screens/Home/HomeScreen';
 
-export default function App() {
+const GRAPHQL_ENDPOINT = 'https://test-service.cerberuslink.net/graphql';
+const AUTH_TOKEN = 'b13f3a77edc38e87e7427608a70485fb';
+
+const client = new ApolloClient({
+  uri: GRAPHQL_ENDPOINT,
+  cache: new InMemoryCache(),
+  headers: {
+    Authorization: AUTH_TOKEN,
+  },
+});
+
+const Stack = createNativeStackNavigator();
+
+function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ApolloProvider client={client}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ApolloProvider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
